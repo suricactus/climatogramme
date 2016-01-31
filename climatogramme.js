@@ -31,7 +31,6 @@
 		return Math.round(value / step) * step;
 	}
 
-
 	function Climatogramme(s) {
 		this.s = extend({
 			el: null,
@@ -80,17 +79,14 @@
 	};
 
 	Climatogramme.prototype.render = function(data) {
-		data.precipitation = data.precipitation.map((d) => { return +d; });
-		data.meanTemperature = data.meanTemperature.map((d) => { return +d; });
+		data.precipitation = data.precipitation.map((d) => { return +d || 0; });
+		data.meanTemperature = data.meanTemperature.map((d) => { return +d || 0; });
 
 		let extentPrec = d3.extent(data.precipitation);
 		let extentTemp = d3.extent(data.meanTemperature);
 		let valueline = d3.svg.line()
 	    .x((d, i)  =>{ return this.xScaleTemp(i); })
 	    .y((d) => { return this.yScaleTemp(d); })
-    	// .attr('fill', 'none')
-    	// .attr('stroke', '#444')
-    	// .attr('stroke-width', '1.5px')
 	    .interpolate('basis');
 
 	    console.log(data.precipitation, d3.max(data.precipitation), roundUp(d3.max(data.precipitation) + 1, this.s.precipitationBufferUp));
@@ -100,16 +96,10 @@
 		this.yScaleTemp.domain([roundDown(extentTemp[0] + 1, this.s.temperatureBufferDown), roundUp(extentTemp[1] + 1, this.s.temperatureBufferUp) ]);
 
 		// Set X and Y axis
-		var a = this.svgG.append('g')
+		this.svgG.append('g')
 			.attr('class', 'x axis')
 			.attr('transform', 'translate(0,' + this.s.height + ')')
 			.call(this.xAxis);
-
-		// a.selectAll('path line')
-		// 	.attr('fill', 'none')
-		// 	.attr('stroke', 'blue')
-		// 	.attr('stroke-width', 1)
-		// 	.attr('shape-rendering', 'crispEdges');
 
 		this.svgG.append('g')
 				.attr('class', 'y axis')
@@ -155,26 +145,32 @@
 
 		let summary = this.svg.append('g').attr('class', 'summary')
 			.attr('font-size', '10px')
-			.attr('transform', `translate(${ this.s.marginLeft }, ${ this.s.height + this.s.marginTop + 30 })`);
+			.attr('transform', `translate(${ this.s.marginLeft }, ${ this.s.height + this.s.marginTop + 15 })`);
+
 		let totalPrecipitation = round(d3.sum(data.precipitation), 1);
 		let meanTemperature = round(d3.mean(data.meanTemperature), 0.01);
 		let amplitude = round(extentTemp[1] - extentTemp[0], 0.01);
+		let thirdClimatogramme = this.s.width / 3;
 
 		summary.append('text')
+			.attr('transform', `translate(${ thirdClimatogramme * 0.5 }, ${ 0 })`)
 			.attr('width', this.s.width / 3 )
 			.attr('fill', 'steelblue')
+			.attr('text-anchor', 'middle')
 			.text(`${ this.s.labelTotalPrecipitation}: ${ totalPrecipitation } ${ this.s.labelPrecipitation }`);
 
 		summary.append('text')
-			.attr('transform', `translate(${ this.s.width / 3 }, ${ 0 })`)
+			.attr('transform', `translate(${ thirdClimatogramme * 1.5 }, ${ 0 })`)
 			.attr('width', this.s.width / 3 )
 			.attr('fill', 'red')
+			.attr('text-anchor', 'middle')
 			.text(`${ this.s.labelMeanTemperature}: ${ meanTemperature } ${ this.s.labelTemperature }`);
 
 		summary.append('text')
-			.attr('transform', `translate(${ this.s.width / 3 * 2}, ${ 0 })`)
+			.attr('transform', `translate(${ thirdClimatogramme * 2.5 }, ${ 0 })`)
 			.attr('width', this.s.width / 3 * 2 )
 			.attr('fill', 'red')
+			.attr('text-anchor', 'middle')
 			.text(`${ this.s.labelAplitudeTemperature}: ${ amplitude } ${ this.s.labelTemperature }`);
 
 		this.svg.append('g')

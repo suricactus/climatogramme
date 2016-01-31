@@ -8,17 +8,18 @@ $(function() {
 	let DOMform = document.getElementById('climatogramme-form');
 	let DOMtable = document.getElementById('climatogramme-data');
 	let DOMresult = document.getElementById('result');
+	let DOMmsg = document.getElementById('msg');
 	let queryParams = parseQuery();
 	let editor;
 	let climatogramme;
 	let table;
 
 	$('#btn-save').click(function() {
+  	DOMmsg.hidden = true;
 		saveJson(extractValues());
 	});
 
 	$('#btn-download').click(function() {
-		console.log(222)
 		saveClimatogramme();
 	});
 
@@ -34,11 +35,7 @@ $(function() {
 		  disable_edit_json: true,
 		  disable_properties: true,
 		  no_additional_properties: true,
-		  theme: 'bootstrap3',
-		  options: {
-
-		  grid_columns: 4
-		  }
+		  theme: 'bootstrap3'
 		});
 
 		loadJson();
@@ -58,9 +55,10 @@ $(function() {
 
   	let options = extractValues();
 
+  	DOMmsg.hidden = false;
+
   	$(DOMresult).empty();
 
-  	console.log(options);
   	climatogramme = new Climatogramme(options);
   }
 
@@ -120,7 +118,7 @@ $(function() {
   }
 
   function saveJson(values) {
-  	let state = btoa(JSON.stringify(values));
+  	let state = btoa(escape(JSON.stringify(values)));
 
   	history.pushState({v: state}, document.title, `?v=${ state }`);
   }
@@ -128,7 +126,7 @@ $(function() {
   function loadJson() {
   	if(!queryParams.v) return;
 
-  	let values = JSON.parse(atob(queryParams.v.replace(/\/$/, '')));
+  	let values = JSON.parse(unescape(atob(queryParams.v.replace(/\/$/, ''))));
   	let data = values.data;
 
   	delete values.el;
@@ -155,7 +153,6 @@ $(function() {
 
   function saveClimatogramme() {
   	let climatogrammeName = dashify(extractValues().primaryTitle);
-  	console.log(climatogrammeName)
   	saveAs(new Blob([DOMresult.innerHTML], {type:"application/svg+xml"}), `climatogramme-${ climatogrammeName }.svg`)
   }
 
