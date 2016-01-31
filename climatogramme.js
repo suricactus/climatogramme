@@ -115,6 +115,7 @@
 				.attr('class', 'y axis')
 				.attr('fill', 'steelblue')
 				.attr('shape-rendering', 'crispEdges')
+				.attr('font-size', '10px')
 				.call(this.yAxisPrec)
 			.append('text')
 				.attr('y', '2em')
@@ -128,6 +129,7 @@
 				.attr('transform', 'translate(' + this.s.width + ', 0)')
 				.attr('fill', 'red')
 				.attr('shape-rendering', 'crispEdges')
+				.attr('font-size', '10px')
 				.call(this.yAxisTemp)
 			.append('text')
 				.attr('y', '2em')
@@ -152,6 +154,7 @@
 				.attr('fill', 'none');
 
 		let summary = this.svg.append('g').attr('class', 'summary')
+			.attr('font-size', '10px')
 			.attr('transform', `translate(${ this.s.marginLeft }, ${ this.s.height + this.s.marginTop + 30 })`);
 		let totalPrecipitation = round(d3.sum(data.precipitation), 1);
 		let meanTemperature = round(d3.mean(data.meanTemperature), 0.01);
@@ -180,7 +183,8 @@
 				.attr('y', '20')
 				.attr('x', (this.s.width + this.s.marginLeft + this.s.marginRight) / 2)
 				.attr('text-anchor', 'middle')
-				.attr('font-size', '2em')
+				.attr('font-size', '20px')
+				.attr('fill', 'black')
 				.text(this.s.primaryTitle);
 
 		this.svgG.selectAll('.axis path, .axis.line')
