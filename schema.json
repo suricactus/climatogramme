@@ -1,0 +1,127 @@
+{
+  "title": "Climatogramme data",
+  "type": "object",
+  "format": "grid",
+  "properties": {
+    "primaryTitle": {
+      "propertyOrder": 10,
+      "type": "string",
+      "minLength": 4,
+      "default": "",
+      "colums": 8,
+      "options": {
+        "grid_columns": 12
+      }
+    },
+    "width": {
+      "propertyOrder": 20,
+      "type": "integer",
+      "default": 400,
+      "minimum": 200,
+      "maximum": 2000
+    },
+    "height": {
+      "propertyOrder": 30,
+      "type": "integer",
+      "default": 600,
+      "minimum": 400,
+      "maximum": 2000
+    },
+    "marginTop": {
+      "propertyOrder": 40,
+      "type": "integer",
+      "default": 40,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "marginRight": {
+      "propertyOrder": 50,
+      "type": "integer",
+      "default": 40,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "marginBottom": {
+      "propertyOrder": 60,
+      "type": "integer",
+      "default": 40,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "marginLeft": {
+      "propertyOrder": 70,
+      "type": "integer",
+      "default": 40,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "precipitationBufferUp": {
+      "propertyOrder": 75,
+      "title": "prec. buffer up, mm",
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "maximum": 1000,
+      "options": {
+        "grid_columns": 3
+      }
+    },
+    "temperatureBufferUp": {
+      "propertyOrder": 76,
+      "title": "t buffer up, °C",
+      "type": "integer",
+      "default": 2,
+      "minimum": 0,
+      "maximum": 50,
+      "options": {
+        "grid_columns": 3
+      }
+    },
+    "temperatureBufferDown": {
+      "propertyOrder": 77,
+      "title": "t buffer down, °C",
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "maximum": 50,
+      "options": {
+        "grid_columns": 3
+      }
+    },
+    "distanceBars": {
+      "propertyOrder": 78,
+      "type": "number",
+      "default": 0.1,
+      "minimum": 0.01,
+      "maximum": 1,
+      "options": {
+        "grid_columns": 3
+      }
+    },
+    "labelTemperature": {
+      "propertyOrder": 90,
+      "type": "string",
+      "default": "°C"
+    },
+    "labelPrecipitation": {
+      "propertyOrder": 100,
+      "type": "string",
+      "default": "mm"
+    },
+    "labelMeanTemperature": {
+      "propertyOrder": 110,
+      "type": "string",
+      "default": "mean temperature"
+    },
+    "labelTotalPrecipitation": {
+      "propertyOrder": 120,
+      "type": "string",
+      "default": "total precipitation"
+    },
+    "labelAplitudeTemperature": {
+      "propertyOrder": 130,
+      "type": "string",
+      "default": "year amplitude"
+    }
+   }
+}
