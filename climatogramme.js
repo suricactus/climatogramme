@@ -44,7 +44,7 @@
 			marginBottom: 40,
 			distanceBars: 0.1,
 			precipitationBufferUp: 20,
-			temperatureBufferUp: 2,
+			temperatureBufferUp: 20,
 			temperatureBufferDown: 10,
 			labelTemperature: '°C',
 			labelPrecipitation: 'mm',
@@ -63,8 +63,8 @@
 		this.yScaleTemp = d3.scale.linear().range([this.s.height, 0], 0);
 
 		this.xAxis = d3.svg.axis().scale(this.xScalePrec).orient('bottom');
-		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left');
-		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right');
+		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left').ticks(10).tickSize(-this.s.width, 0, 0);
+		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right').ticks(20);
 
 		this.svg = d3.select(this.s.el).append('svg')
 			.attr('width', this.s.width + this.s.marginLeft + this.s.marginRight)
@@ -91,7 +91,7 @@
 
 	    console.log(data.precipitation, d3.max(data.precipitation), roundUp(d3.max(data.precipitation) + 1, this.s.precipitationBufferUp));
 		this.xScalePrec.domain(MONTHS);
-		this.yScalePrec.domain([0, roundUp(d3.max(data.precipitation) + 1, PREC_BUFFER_UP)]);
+		this.yScalePrec.domain([0, roundUp(d3.max(data.precipitation) + 1, this.s.precipitationBufferUp)]);
 		this.xScaleTemp.domain([0, MONTHS.length - 1]);
 		this.yScaleTemp.domain([roundDown(extentTemp[0] + 1, this.s.temperatureBufferDown), roundUp(extentTemp[1] + 1, this.s.temperatureBufferUp) ]);
 
@@ -183,7 +183,7 @@
 				.attr('fill', 'black')
 				.text(this.s.primaryTitle);
 
-		this.svgG.selectAll('.axis path, .axis.line')
+		this.svgG.selectAll('.axis path, .axis line')
 			.attr('fill', 'none')
 			.attr('stroke', 'grey')
 			.attr('stroke-width', '1')

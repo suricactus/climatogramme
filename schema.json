@@ -92,7 +92,7 @@
       "propertyOrder": 78,
       "type": "number",
       "default": 0.1,
-      "minimum": 0.01,
+      "minimum": 0,
       "maximum": 1,
       "options": {
         "grid_columns": 3
