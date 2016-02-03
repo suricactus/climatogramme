@@ -23,6 +23,7 @@
     "d3": "~3.5.14",
     "handsontable": "~0.21.0",
     "json-editor": "~0.7.23",
-    "filesaver": "*"
+    "filesaver": "*",
+    "canvas-to-Blob.js": "*"
   }
 }
