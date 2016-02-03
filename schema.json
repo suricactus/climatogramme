@@ -111,17 +111,17 @@
     "labelMeanTemperature": {
       "propertyOrder": 110,
       "type": "string",
-      "default": "mean temperature"
+      "default": "mean t"
     },
     "labelTotalPrecipitation": {
       "propertyOrder": 120,
       "type": "string",
-      "default": "total precipitation"
+      "default": "precipitation"
     },
     "labelAplitudeTemperature": {
       "propertyOrder": 130,
       "type": "string",
-      "default": "year amplitude"
+      "default": "t amplitude"
     },
     "whiteBackground": {
       "propertyOrder": 140,

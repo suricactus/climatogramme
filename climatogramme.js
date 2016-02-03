@@ -93,7 +93,7 @@
 		this.svg = d3.select(this.s.el).append('svg')
 			.attr('width', this.s.width + this.s.marginLeft + this.s.marginRight)
 			.attr('height', this.s.height + this.s.marginTop + this.s.marginBottom)
-			.attr('background-color', this.s.whiteBackground ? 'white' : 'transparent')
+			.style('background-color', this.s.whiteBackground ? 'white' : 'transparent')
 			.attr('version', '1.1')
 			.attr('xmlns', 'http://www.w3.org/2000/svg')
 			.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
@@ -118,11 +118,6 @@
 		let tempActualStep = getActualStep(aplitudeTempValue, precNumSteps);
 		let syncMaxTempValue = roundUp(maxTempValue, tempActualStep);
 		let syncMinTempValue = syncMaxTempValue - (tempActualStep * precNumSteps);
-
-		console.log('tempActualStep', tempActualStep);
-		console.log('precNumSteps', precNumSteps);
-		console.log('aplitudeTempValue', aplitudeTempValue);
-		console.log('minTempValue', minTempValue);
 
 		let valueline = d3.svg.line()
 	    .x((d, i)  =>{ return this.xScaleTemp(i); })
