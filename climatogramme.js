@@ -71,9 +71,9 @@
 			temperatureBufferDown: 10,
 			labelTemperature: '°C',
 			labelPrecipitation: 'mm',
-			labelMeanTemperature: 'mean temperature',
-			labelTotalPrecipitation: 'total precipitation',
-			labelAplitudeTemperature: 'year aplitude',
+			labelMeanTemperature: 'mean t',
+			labelTotalPrecipitation: 'precipitation',
+			labelAplitudeTemperature: 't aplitude',
 			data: null,
 			whiteBackground: true
 		}, s);
