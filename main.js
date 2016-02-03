@@ -55,6 +55,8 @@ $(function() {
 
   	let options = extractValues();
 
+  	delete options.saveImageAs;
+
   	DOMmsg.hidden = false;
 
   	$(DOMresult).empty();
@@ -140,7 +142,7 @@ $(function() {
     let match;
 		let pl = /\+/g;
     let search = /([^&=]+)=?([^&]*)/g;
-    let decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); };
+    let decode = function (s) { return decodeURIComponent(s.replace(pl, ' ')); };
     let query = window.location.search.substring(1);
     let urlParams = {};
 
@@ -152,8 +154,44 @@ $(function() {
   }
 
   function saveClimatogramme() {
-  	let climatogrammeName = dashify(extractValues().primaryTitle);
-  	saveAs(new Blob([DOMresult.innerHTML], {type:"application/svg+xml"}), `climatogramme-${ climatogrammeName }.svg`)
+  	let options = extractValues();
+  	let climatogrammeName = `climatogramme-${ dashify(options.primaryTitle) }`;
+
+  	switch(options.saveImageAs) {
+  		case 'PNG':
+				saveClimatogrammePng(climatogrammeName);
+  			break;
+			case 'SVG':
+				saveClimatogrammeSvg(climatogrammeName);
+				break;
+			default:
+				alert('Unknown type');
+  	}
+  }
+
+  function saveClimatogrammeSvg(climatogrammeName) {
+  	saveAs(new Blob([DOMresult.innerHTML], {type:'application/svg+xml'}), `${ climatogrammeName }.svg`)
+  }
+
+  function saveClimatogrammePng(climatogrammeName) {
+	  let imgSrc = 'data:image/svg+xml;base64,'+ btoa(unescape(encodeURIComponent(DOMresult.innerHTML)));
+		let image = new Image();
+
+		image.src = imgSrc;
+
+	  image.onload = function() {
+		  let canvas = document.createElement('canvas');
+		  let context = canvas.getContext('2d');
+
+		  canvas.width = image.width;
+		  canvas.height = image.height;
+		  context.drawImage(image, 0, 0);
+
+
+			canvas.toBlob(function(blob) {
+			  saveAs(blob, `${ climatogrammeName }.png`)
+			});
+		}
   }
 
   function dashify(str) {

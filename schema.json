@@ -122,6 +122,19 @@
       "propertyOrder": 130,
       "type": "string",
       "default": "year amplitude"
+    },
+    "whiteBackground": {
+      "propertyOrder": 140,
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "saveImageAs": {
+      "propertyOrder": 150,
+      "type": "select",
+      "default": "SVG",
+      "enum": ["SVG", "PNG"],
+      "required": true
     }
    }
 }

@@ -2,9 +2,14 @@
 	'use strict';
 
 	const MONTHS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
-	const TEMP_BUFFER_DOWN = 10;
-	const TEMP_BUFFER_UP = 2;
-	const PREC_BUFFER_UP = 20;
+	const TEMP_BUFFER_UP_PERCENT = 10;
+	const TEMP_BUFFER_DOWN_PERCENT = 30;
+	const TEMP_TICK_SIZE = 2;
+	const PREC_BUFFER_UP_PERCENT = 5;
+	const PREC_TICK_SIZE = 20;
+	const NUMBER_OF_TICKS = 20;
+	const D3_TICK_STEPS = [1, 2, 5];
+
 
 	// helper
 	function extend() {
@@ -31,6 +36,24 @@
 		return Math.round(value / step) * step;
 	}
 
+	function getActualStep(rangeSize, numSteps) {
+		let actualStep = 1;
+		let calcStep = rangeSize / numSteps;
+		let log = Math.floor(Math.log10(calcStep));
+
+		if(log < 0 || log >= 1) {
+			calcStep = calcStep / Math.pow(10, log);
+		}
+
+		for(let i = 0, l = D3_TICK_STEPS.length; i < l; i++) {
+			if(D3_TICK_STEPS[l - 1 - i] >= calcStep) {
+				actualStep = D3_TICK_STEPS[l - 1 - i];
+			}
+		}
+
+		return actualStep * Math.pow(10, log);
+	}
+
 	function Climatogramme(s) {
 		this.s = extend({
 			el: null,
@@ -52,6 +75,7 @@
 			labelTotalPrecipitation: 'total precipitation',
 			labelAplitudeTemperature: 'year aplitude',
 			data: null,
+			whiteBackground: true
 		}, s);
 
 		this.width = this.s.width - this.s.marginLeft - this.s.marginRight;
@@ -62,16 +86,17 @@
 		this.yScalePrec = d3.scale.linear().range([this.s.height, 0], 0);
 		this.yScaleTemp = d3.scale.linear().range([this.s.height, 0], 0);
 
-		this.xAxis = d3.svg.axis().scale(this.xScalePrec).orient('bottom');
-		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left').ticks(10).tickSize(-this.s.width, 0, 0);
-		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right').ticks(20);
+		this.xAxis = d3.svg.axis().scale(this.xScalePrec).orient('bottom').tickSize(0, 0, 0);
+		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left').ticks(NUMBER_OF_TICKS).tickSize(-this.s.width, 0, 0);
+		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right').ticks(NUMBER_OF_TICKS);
 
 		this.svg = d3.select(this.s.el).append('svg')
 			.attr('width', this.s.width + this.s.marginLeft + this.s.marginRight)
 			.attr('height', this.s.height + this.s.marginTop + this.s.marginBottom)
-			.attr('fill', 'white')
+			.attr('background-color', this.s.whiteBackground ? 'white' : 'transparent')
 			.attr('version', '1.1')
-			.attr('xmlns', 'http://www.w3.org/2000/svg');
+			.attr('xmlns', 'http://www.w3.org/2000/svg')
+			.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 		this.svgG = this.svg.append('g')
 			.attr('transform', 'translate(' + this.s.marginLeft + ',' + this.s.marginTop + ')');
 
@@ -84,20 +109,37 @@
 
 		let extentPrec = d3.extent(data.precipitation);
 		let extentTemp = d3.extent(data.meanTemperature);
+		let maxPrecValue = roundUp(extentPrec[1] + this.s.precipitationBufferUp, PREC_TICK_SIZE);
+		let precActualStep = getActualStep(maxPrecValue, NUMBER_OF_TICKS);
+		let precNumSteps = maxPrecValue / precActualStep;
+		let maxTempValue = roundUp(extentTemp[1] + this.s.temperatureBufferUp, TEMP_TICK_SIZE);
+		let minTempValue = roundDown(extentTemp[0] - this.s.temperatureBufferDown, TEMP_TICK_SIZE);
+		let aplitudeTempValue = maxTempValue - minTempValue;
+		let tempActualStep = getActualStep(aplitudeTempValue, precNumSteps);
+		let syncMaxTempValue = roundUp(maxTempValue, tempActualStep);
+		let syncMinTempValue = syncMaxTempValue - (tempActualStep * precNumSteps);
+
+		console.log('tempActualStep', tempActualStep);
+		console.log('precNumSteps', precNumSteps);
+		console.log('aplitudeTempValue', aplitudeTempValue);
+		console.log('minTempValue', minTempValue);
+
 		let valueline = d3.svg.line()
 	    .x((d, i)  =>{ return this.xScaleTemp(i); })
 	    .y((d) => { return this.yScaleTemp(d); })
 	    .interpolate('basis');
 
-	    console.log(data.precipitation, d3.max(data.precipitation), roundUp(d3.max(data.precipitation) + 1, this.s.precipitationBufferUp));
 		this.xScalePrec.domain(MONTHS);
-		this.yScalePrec.domain([0, roundUp(d3.max(data.precipitation) + 1, this.s.precipitationBufferUp)]);
+		this.yScalePrec.domain([0, maxPrecValue]);
 		this.xScaleTemp.domain([0, MONTHS.length - 1]);
-		this.yScaleTemp.domain([roundDown(extentTemp[0] + 1, this.s.temperatureBufferDown), roundUp(extentTemp[1] + 1, this.s.temperatureBufferUp) ]);
+		this.yScaleTemp.domain([syncMinTempValue, syncMaxTempValue]);
+
 
 		// Set X and Y axis
 		this.svgG.append('g')
 			.attr('class', 'x axis')
+			.attr('fill', 'black')
+			.attr('font-size', '10px')
 			.attr('transform', 'translate(0,' + this.s.height + ')')
 			.call(this.xAxis);
 
@@ -108,8 +150,8 @@
 				.attr('font-size', '10px')
 				.call(this.yAxisPrec)
 			.append('text')
-				.attr('y', '2em')
-				.attr('x', '-0.75em')
+				.attr('y', this.s.height + 15)
+				.attr('x', 0)
 				.style('text-anchor', 'end')
 				.text(this.s.labelPrecipitation);
 
@@ -122,8 +164,8 @@
 				.attr('font-size', '10px')
 				.call(this.yAxisTemp)
 			.append('text')
-				.attr('y', '2em')
-				.attr('x', '1em')
+				.attr('y', this.s.height + 15)
+				.attr('x', 0)
 				.text(this.s.labelTemperature);
 
 		// Draw precipitation bars
@@ -145,11 +187,11 @@
 
 		let summary = this.svg.append('g').attr('class', 'summary')
 			.attr('font-size', '10px')
-			.attr('transform', `translate(${ this.s.marginLeft }, ${ this.s.height + this.s.marginTop + 15 })`);
+			.attr('transform', `translate(${ this.s.marginLeft }, ${ this.s.marginTop + 12 })`);
 
-		let totalPrecipitation = round(d3.sum(data.precipitation), 1);
-		let meanTemperature = round(d3.mean(data.meanTemperature), 0.01);
-		let amplitude = round(extentTemp[1] - extentTemp[0], 0.01);
+		let totalPrecipitation = round(d3.sum(data.precipitation), 1).toFixed(0);
+		let meanTemperature = round(d3.mean(data.meanTemperature), 0.01).toFixed(2);
+		let amplitude = round(extentTemp[1] - extentTemp[0], 0.01).toFixed(2);
 		let thirdClimatogramme = this.s.width / 3;
 
 		summary.append('text')
