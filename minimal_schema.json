@@ -4,7 +4,7 @@
   "format": "grid",
   "properties": {
     "primaryTitle": {
-      "title": "Заглавие",
+      "title": "Име на станция, надморска височина и климатична зона",
       "propertyOrder": 10,
       "type": "string",
       "minLength": 4,
