@@ -1,0 +1,18 @@
+{
+  "title": "Данни за климатограмата",
+  "type": "object",
+  "format": "grid",
+  "properties": {
+    "primaryTitle": {
+      "title": "Заглавие",
+      "propertyOrder": 10,
+      "type": "string",
+      "minLength": 4,
+      "default": "",
+      "colums": 8,
+      "options": {
+        "grid_columns": 12
+      }
+    }
+   }
+}
