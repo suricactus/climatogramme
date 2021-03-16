@@ -2,12 +2,8 @@
 	'use strict';
 
 	const MONTHS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
-	const TEMP_BUFFER_UP_PERCENT = 10;
-	const TEMP_BUFFER_DOWN_PERCENT = 30;
 	const TEMP_TICK_SIZE = 2;
-	const PREC_BUFFER_UP_PERCENT = 5;
 	const PREC_TICK_SIZE = 20;
-	const NUMBER_OF_TICKS = 20;
 	const D3_TICK_STEPS = [1, 2, 5];
 
 
@@ -61,6 +57,10 @@
 			height: 600,
 			primaryTitle: '',
 			secondaryTitle: '',
+			fontSizeSummary: 12,
+			fontSizeXAxis: 12,
+			fontSizeYAxis: 12,
+			numberTicks: 20,
 			marginTop: 40,
 			marginLeft: 40,
 			marginRight: 40,
@@ -87,8 +87,8 @@
 		this.yScaleTemp = d3.scale.linear().range([this.s.height, 0], 0);
 
 		this.xAxis = d3.svg.axis().scale(this.xScalePrec).orient('bottom').tickSize(0, 0, 0);
-		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left').ticks(NUMBER_OF_TICKS).tickSize(-this.s.width, 0, 0);
-		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right').ticks(NUMBER_OF_TICKS);
+		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left').ticks(this.s.numberTicks).tickSize(-this.s.width, 0, 0);
+		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right').ticks(this.s.numberTicks);
 
 		this.svg = d3.select(this.s.el).append('svg')
 			.attr('width', this.s.width + this.s.marginLeft + this.s.marginRight)
@@ -110,7 +110,7 @@
 		let extentPrec = d3.extent(data.precipitation);
 		let extentTemp = d3.extent(data.meanTemperature);
 		let maxPrecValue = roundUp(extentPrec[1] + this.s.precipitationBufferUp, PREC_TICK_SIZE);
-		let precActualStep = getActualStep(maxPrecValue, NUMBER_OF_TICKS);
+		let precActualStep = getActualStep(maxPrecValue, this.s.numberTicks);
 		let precNumSteps = maxPrecValue / precActualStep;
 		let maxTempValue = roundUp(extentTemp[1] + this.s.temperatureBufferUp, TEMP_TICK_SIZE);
 		let minTempValue = roundDown(extentTemp[0] - this.s.temperatureBufferDown, TEMP_TICK_SIZE);
@@ -134,7 +134,7 @@
 		this.svgG.append('g')
 			.attr('class', 'x axis')
 			.attr('fill', 'black')
-			.attr('font-size', '10px')
+			.attr('font-size', this.s.fontSizeXAxis)
 			.attr('transform', 'translate(0,' + this.s.height + ')')
 			.call(this.xAxis);
 
@@ -142,7 +142,7 @@
 				.attr('class', 'y axis')
 				.attr('fill', 'steelblue')
 				.attr('shape-rendering', 'crispEdges')
-				.attr('font-size', '10px')
+				.attr('font-size', this.s.fontSizeYAxis + 'px')
 				.call(this.yAxisPrec)
 			.append('text')
 				.attr('y', this.s.height + 15)
@@ -156,7 +156,7 @@
 				.attr('transform', 'translate(' + this.s.width + ', 0)')
 				.attr('fill', 'red')
 				.attr('shape-rendering', 'crispEdges')
-				.attr('font-size', '10px')
+				.attr('font-size', this.s.fontSizeYAxis + 'px')
 				.call(this.yAxisTemp)
 			.append('text')
 				.attr('y', this.s.height + 15)
@@ -194,6 +194,7 @@
 			.attr('width', this.s.width / 3 )
 			.attr('fill', 'steelblue')
 			.attr('text-anchor', 'middle')
+			.attr('font-size', this.s.fontSizeSummary)
 			.text(`${ this.s.labelTotalPrecipitation}: ${ totalPrecipitation } ${ this.s.labelPrecipitation }`);
 
 		summary.append('text')
@@ -201,6 +202,7 @@
 			.attr('width', this.s.width / 3 )
 			.attr('fill', 'red')
 			.attr('text-anchor', 'middle')
+			.attr('font-size', this.s.fontSizeSummary)
 			.text(`${ this.s.labelMeanTemperature}: ${ meanTemperature } ${ this.s.labelTemperature }`);
 
 		summary.append('text')
@@ -208,6 +210,7 @@
 			.attr('width', this.s.width / 3 * 2 )
 			.attr('fill', 'red')
 			.attr('text-anchor', 'middle')
+			.attr('font-size', this.s.fontSizeSummary)
 			.text(`${ this.s.labelAplitudeTemperature}: ${ amplitude } ${ this.s.labelTemperature }`);
 
 		this.svg.append('g')
