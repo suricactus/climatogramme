@@ -3,7 +3,6 @@ $(function() {
 
   const NUM_ROWS = 2;
   const NUM_COLS = 12;
-  const NUM_MONTHS = 12;
 
 	let DOMform = document.getElementById('climatogramme-form');
 	let DOMtable = document.getElementById('climatogramme-data');
@@ -95,12 +94,6 @@ $(function() {
     return data;
   }
 
-  function sumRow(context, row) {
-  	return context.getData(row, 0, row, 11)[0].reduce((a, b) => {
-      return +a + +b;
-    });
-  };
-
   function buildTable() {
   	return new Handsontable(DOMtable, {
 	  	data: buildData(),
@@ -134,7 +127,7 @@ $(function() {
   	delete values.el;
   	delete values.data;
 
-  	editor.setValue(values);
+  	editor.setValue($.extend(editor.getValue(), values));
   	table.loadData([data.precipitation, data.meanTemperature]);
   }
 

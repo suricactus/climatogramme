@@ -8,9 +8,52 @@
       "type": "string",
       "minLength": 4,
       "default": "",
-      "colums": 8,
       "options": {
         "grid_columns": 12
+      }
+    },
+    "fontSizeSummary": {
+      "propertyOrder": 15,
+      "title": "Size summary (px)",
+      "type": "number",
+      "default": 12,
+      "minimum": 5,
+      "maximum": 50,
+      "options": {
+        "grid_columns": 3
+      }
+    },
+    "fontSizeXAxis": {
+      "propertyOrder": 16,
+      "title": "Size X axis (px)",
+      "type": "number",
+      "default": 10,
+      "minimum": 5,
+      "maximum": 50,
+      "options": {
+        "grid_columns": 3
+      }
+    },
+    "fontSizeYAxis": {
+      "propertyOrder": 16,
+      "title": "Size Y axis (px)",
+      "type": "number",
+      "default": 10,
+      "minimum": 5,
+      "maximum": 50,
+      "options": {
+        "grid_columns": 3
+      }
+    },
+    "numberTicks": {
+      "propertyOrder": 17,
+      "title": "Number y ticks",
+      "type": "number",
+      "default": 10,
+      "minimum": 5,
+      "maximum": 50,
+      "options": {
+        "grid_columns": 3
       }
     },
     "width": {
