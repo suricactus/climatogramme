@@ -20,7 +20,18 @@
       "minimum": 5,
       "maximum": 50,
       "options": {
-        "grid_columns": 3
+        "grid_columns": 6
+      }
+    },
+    "fontFamily": {
+      "propertyOrder": 15,
+      "title": "Font summary (font family)",
+      "type": "select",
+      "enum": ["sans-serif", "serif"],
+      "default": "sans-serif",
+      "reguired": true,
+      "options": {
+        "grid_columns": 6
       }
     },
     "fontSizeXAxis": {
@@ -31,7 +42,7 @@
       "minimum": 5,
       "maximum": 50,
       "options": {
-        "grid_columns": 3
+        "grid_columns": 4
       }
     },
     "fontSizeYAxis": {
@@ -42,7 +53,7 @@
       "minimum": 5,
       "maximum": 50,
       "options": {
-        "grid_columns": 3
+        "grid_columns": 4
       }
     },
     "numberTicks": {
@@ -53,50 +64,90 @@
       "minimum": 5,
       "maximum": 50,
       "options": {
-        "grid_columns": 3
+        "grid_columns": 4
       }
     },
     "width": {
       "propertyOrder": 20,
       "type": "integer",
-      "default": 400,
+      "default": 500,
       "minimum": 200,
-      "maximum": 2000
+      "maximum": 2000,
+      "options": {
+        "grid_columns": 3
+      }
     },
     "height": {
       "propertyOrder": 30,
       "type": "integer",
-      "default": 600,
+      "default": 800,
       "minimum": 400,
-      "maximum": 2000
+      "maximum": 2000,
+      "options": {
+        "grid_columns": 3
+      }
+    },
+    "xAxisMargin": {
+      "propertyOrder": 31,
+      "title": "X axis text margin (px)",
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "maximum": 20,
+      "options": {
+        "grid_columns": 3
+      }
+    },
+    "yAxisMargin": {
+      "propertyOrder": 31,
+      "title": "Y axis text margin (px)",
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "maximum": 20,
+      "options": {
+        "grid_columns": 3
+      }
     },
     "marginTop": {
       "propertyOrder": 40,
       "type": "integer",
       "default": 40,
       "minimum": 0,
-      "maximum": 100
+      "maximum": 100,
+      "options": {
+        "grid_columns": 3
+      }
     },
     "marginRight": {
       "propertyOrder": 50,
       "type": "integer",
       "default": 40,
       "minimum": 0,
-      "maximum": 100
+      "maximum": 100,
+      "options": {
+        "grid_columns": 3
+      }
     },
     "marginBottom": {
       "propertyOrder": 60,
       "type": "integer",
       "default": 40,
       "minimum": 0,
-      "maximum": 100
+      "maximum": 100,
+      "options": {
+        "grid_columns": 3
+      }
     },
     "marginLeft": {
       "propertyOrder": 70,
       "type": "integer",
       "default": 40,
       "minimum": 0,
-      "maximum": 100
+      "maximum": 100,
+      "options": {
+        "grid_columns": 3
+      }
     },
     "precipitationBufferUp": {
       "propertyOrder": 75,
@@ -166,6 +217,24 @@
       "type": "string",
       "default": "t amplitude"
     },
+    "precipitationColor": {
+      "propertyOrder": 131,
+      "type": "string",
+      "format": "color",
+      "default": "#4682B4",
+      "options": {
+        "grid_columns": 6
+      }
+    },
+    "tempColor": {
+      "propertyOrder": 131,
+      "type": "string",
+      "format": "color",
+      "default": "#ff0000",
+      "options": {
+        "grid_columns": 6
+      }
+    },
     "whiteBackground": {
       "propertyOrder": 140,
       "type": "boolean",
@@ -178,6 +247,14 @@
       "default": "SVG",
       "enum": ["SVG", "PNG"],
       "required": true
+    },
+    "monthLabels": {
+      "propertyOrder": 160,
+      "title": "Month Labels",
+      "type": "select",
+      "enum": ["Roman (I-XII)", "BG Letters (Я-Д)", "Latin Letters (J-D)"],
+      "required": true,
+      "default": "Roman (I-XII)"
     }
    }
 }
