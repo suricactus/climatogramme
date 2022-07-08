@@ -1,7 +1,13 @@
 (function(window) {
 	'use strict';
 
-	const MONTHS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+	const MONTHS = {
+		'Roman (I-XII)': ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'],
+		'BG Abbr (яну-дек)': ['яну', 'фев', 'мар', 'апр', 'май', 'юни', 'юли', 'авг', 'сеп', 'окт', 'ное', 'дек'],
+		'BG Letters (Я-Д)': ['Я', 'Ф', 'М', 'А', 'М ', 'Ю', 'Ю ', 'А ', 'С', 'О', 'Н', 'Д'],
+		'Latin Abbr (Jan-Dec)': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+		'Latin Letters (J-D)': ['J', 'F', 'M', 'A', 'M ', ' J', 'J ', 'A ', 'S', 'O', 'N', 'D']
+	};
 	const TEMP_TICK_SIZE = 2;
 	const PREC_TICK_SIZE = 20;
 	const D3_TICK_STEPS = [1, 2, 5];
@@ -58,9 +64,14 @@
 			primaryTitle: '',
 			secondaryTitle: '',
 			fontSizeSummary: 12,
+			fontFamily: 'sans-serif',
+			precipitationColor: '#4682B4',
+			tempColor: '#ff0000',
 			fontSizeXAxis: 12,
 			fontSizeYAxis: 12,
 			numberTicks: 20,
+			y: 10,
+			yAxisMargin: 10,
 			marginTop: 40,
 			marginLeft: 40,
 			marginRight: 40,
@@ -75,7 +86,8 @@
 			labelTotalPrecipitation: 'precipitation',
 			labelAplitudeTemperature: 't aplitude',
 			data: null,
-			whiteBackground: true
+			whiteBackground: true,
+			monthLabels: 'Roman (I-XII)'
 		}, s);
 
 		this.width = this.s.width - this.s.marginLeft - this.s.marginRight;
@@ -86,13 +98,13 @@
 		this.yScalePrec = d3.scale.linear().range([this.s.height, 0], 0);
 		this.yScaleTemp = d3.scale.linear().range([this.s.height, 0], 0);
 
-		this.xAxis = d3.svg.axis().scale(this.xScalePrec).orient('bottom').tickSize(0, 0, 0);
-		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left').ticks(this.s.numberTicks).tickSize(-this.s.width, 0, 0);
-		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right').ticks(this.s.numberTicks);
+		this.xAxis = d3.svg.axis().scale(this.xScalePrec).orient('bottom').tickPadding(this.s.xAxisMargin).tickSize(0, 0, 0);
+		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left').ticks(this.s.numberTicks).tickPadding(this.s.yAxisMargin).tickSize(-this.s.width, 0, 0);
+		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right').ticks(this.s.numberTicks).tickPadding(this.s.yAxisMargin);
 
 		this.svg = d3.select(this.s.el).append('svg')
-			.attr('width', this.s.width + this.s.marginLeft + this.s.marginRight)
-			.attr('height', this.s.height + this.s.marginTop + this.s.marginBottom)
+			.attr('width', this.s.width + this.s.marginLeft + this.s.marginRight + this.s.yAxisMargin + 10)
+			.attr('height', this.s.height + this.s.marginTop + this.s.marginBottom + this.s.xAxisMargin + 10)
 			.style('background-color', this.s.whiteBackground ? 'white' : 'transparent')
 			.attr('version', '1.1')
 			.attr('xmlns', 'http://www.w3.org/2000/svg')
@@ -120,13 +132,15 @@
 		let syncMinTempValue = syncMaxTempValue - (tempActualStep * precNumSteps);
 
 		let valueline = d3.svg.line()
-	    .x((d, i)  =>{ return this.xScaleTemp(i); })
-	    .y((d) => { return this.yScaleTemp(d); })
-	    .interpolate('basis');
+			.x((d, i)  =>{ return this.xScaleTemp(i); })
+			.y((d) => { return this.yScaleTemp(d); })
+			.interpolate('basis');
 
-		this.xScalePrec.domain(MONTHS);
+
+
+		this.xScalePrec.domain(MONTHS[this.s.monthLabels]);
 		this.yScalePrec.domain([0, maxPrecValue]);
-		this.xScaleTemp.domain([0, MONTHS.length - 1]);
+		this.xScaleTemp.domain([0, MONTHS[this.s.monthLabels].length - 1]);
 		this.yScaleTemp.domain([syncMinTempValue, syncMaxTempValue]);
 
 
@@ -135,18 +149,20 @@
 			.attr('class', 'x axis')
 			.attr('fill', 'black')
 			.attr('font-size', this.s.fontSizeXAxis)
-			.attr('transform', 'translate(0,' + this.s.height + ')')
+			.attr('font-family', this.s.fontFamily)
+			.attr('transform', `translate(0, ${this.s.height})`)
 			.call(this.xAxis);
 
 		this.svgG.append('g')
 				.attr('class', 'y axis')
-				.attr('fill', 'steelblue')
+				.attr('fill', this.s.precipitationColor)
 				.attr('shape-rendering', 'crispEdges')
 				.attr('font-size', this.s.fontSizeYAxis + 'px')
-				.call(this.yAxisPrec)
+				.attr('font-family', this.s.fontFamily)
+			.call(this.yAxisPrec)
 			.append('text')
 				.attr('y', this.s.height + 15)
-				.attr('x', 0)
+				.attr('x', -this.s.yAxisMargin + 5)
 				.style('text-anchor', 'end')
 				.text(this.s.labelPrecipitation);
 
@@ -154,29 +170,30 @@
 		this.svgG.append('g')
 				.attr('class', 'y axis')
 				.attr('transform', 'translate(' + this.s.width + ', 0)')
-				.attr('fill', 'red')
+				.attr('fill', this.s.tempColor)
 				.attr('shape-rendering', 'crispEdges')
 				.attr('font-size', this.s.fontSizeYAxis + 'px')
-				.call(this.yAxisTemp)
+				.attr('font-family', this.s.fontFamily)
+			.call(this.yAxisTemp)
 			.append('text')
 				.attr('y', this.s.height + 15)
-				.attr('x', 0)
+				.attr('x', this.s.yAxisMargin + 5)
 				.text(this.s.labelTemperature);
 
 		// Draw precipitation bars
 		this.svgG.selectAll('.bar')
 				.data(data.precipitation)
 			.enter().append('rect')
-				.attr('x', (d, i) => { return this.xScalePrec(MONTHS[i]); })
+				.attr('x', (d, i) => { return this.xScalePrec(MONTHS[this.s.monthLabels][i]); })
 				.attr('y', (d) => { return this.yScalePrec(d); })
-				.attr('fill', 'steelblue')
+				.attr('fill', this.s.precipitationColor)
 				.attr('width', this.xScalePrec.rangeBand())
 				.attr('height', (d) => { return this.s.height - this.yScalePrec(d); });
 
 		// Draw mean temperature
 		this.svgG.append('path')
 				.attr('d', valueline(data.meanTemperature))
-				.attr('stroke', 'red')
+				.attr('stroke', this.s.tempColor)
 				.attr('stroke-width', 4)
 				.attr('fill', 'none');
 
@@ -192,25 +209,28 @@
 		summary.append('text')
 			.attr('transform', `translate(${ thirdClimatogramme * 0.5 }, ${ 0 })`)
 			.attr('width', this.s.width / 3 )
-			.attr('fill', 'steelblue')
+			.attr('fill', this.s.precipitationColor)
 			.attr('text-anchor', 'middle')
 			.attr('font-size', this.s.fontSizeSummary)
+			.attr('font-family', this.s.fontFamily)
 			.text(`${ this.s.labelTotalPrecipitation}: ${ totalPrecipitation } ${ this.s.labelPrecipitation }`);
 
 		summary.append('text')
 			.attr('transform', `translate(${ thirdClimatogramme * 1.5 }, ${ 0 })`)
 			.attr('width', this.s.width / 3 )
-			.attr('fill', 'red')
+			.attr('fill', this.s.tempColor)
 			.attr('text-anchor', 'middle')
 			.attr('font-size', this.s.fontSizeSummary)
+			.attr('font-family', this.s.fontFamily)
 			.text(`${ this.s.labelMeanTemperature}: ${ meanTemperature } ${ this.s.labelTemperature }`);
 
 		summary.append('text')
 			.attr('transform', `translate(${ thirdClimatogramme * 2.5 }, ${ 0 })`)
 			.attr('width', this.s.width / 3 * 2 )
-			.attr('fill', 'red')
+			.attr('fill', this.s.tempColor)
 			.attr('text-anchor', 'middle')
 			.attr('font-size', this.s.fontSizeSummary)
+			.attr('font-family', this.s.fontFamily)
 			.text(`${ this.s.labelAplitudeTemperature}: ${ amplitude } ${ this.s.labelTemperature }`);
 
 		this.svg.append('g')
