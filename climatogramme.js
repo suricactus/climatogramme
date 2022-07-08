@@ -2,10 +2,12 @@
 	'use strict';
 
 	const MONTHS = {
-    'Roman (I-XII)': ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'],
-    'BG Letters (Я-Д)': ['яну', 'фев', 'мар', 'апр', 'май', 'юни', 'юли', 'авг', 'сеп', 'окт', 'ное', 'дек'],
-    'Latin Letters (J-D)': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  };
+		'Roman (I-XII)': ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'],
+		'BG Abbr (яну-дек)': ['яну', 'фев', 'мар', 'апр', 'май', 'юни', 'юли', 'авг', 'сеп', 'окт', 'ное', 'дек'],
+		'BG Letters (Я-Д)': ['Я', 'Ф', 'М', 'А', 'М ', 'Ю', 'Ю ', 'А ', 'С', 'О', 'Н', 'Д'],
+		'Latin Abbr (Jan-Dec)': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+		'Latin Letters (J-D)': ['J', 'F', 'M', 'A', 'M ', ' J', 'J ', 'A ', 'S', 'O', 'N', 'D']
+	};
 	const TEMP_TICK_SIZE = 2;
 	const PREC_TICK_SIZE = 20;
 	const D3_TICK_STEPS = [1, 2, 5];
@@ -62,14 +64,14 @@
 			primaryTitle: '',
 			secondaryTitle: '',
 			fontSizeSummary: 12,
-      fontFamily: 'sans-serif',
-      precipitationColor: '#4682B4',
-      tempColor: '#ff0000',
+			fontFamily: 'sans-serif',
+			precipitationColor: '#4682B4',
+			tempColor: '#ff0000',
 			fontSizeXAxis: 12,
 			fontSizeYAxis: 12,
 			numberTicks: 20,
-      xAxisMargin: 10,
-      yAxisMargin: 10,
+			y: 10,
+			yAxisMargin: 10,
 			marginTop: 40,
 			marginLeft: 40,
 			marginRight: 40,
@@ -85,7 +87,7 @@
 			labelAplitudeTemperature: 't aplitude',
 			data: null,
 			whiteBackground: true,
-      monthLabels: 'Roman (I-XII)'
+			monthLabels: 'Roman (I-XII)'
 		}, s);
 
 		this.width = this.s.width - this.s.marginLeft - this.s.marginRight;
@@ -96,13 +98,13 @@
 		this.yScalePrec = d3.scale.linear().range([this.s.height, 0], 0);
 		this.yScaleTemp = d3.scale.linear().range([this.s.height, 0], 0);
 
-		this.xAxis = d3.svg.axis().scale(this.xScalePrec).orient('bottom').tickSize(0, 0, 0);
-		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left').ticks(this.s.numberTicks).tickSize(-this.s.width, 0, 0);
-		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right').ticks(this.s.numberTicks);
+		this.xAxis = d3.svg.axis().scale(this.xScalePrec).orient('bottom').tickPadding(this.s.xAxisMargin).tickSize(0, 0, 0);
+		this.yAxisPrec = d3.svg.axis().scale(this.yScalePrec).orient('left').ticks(this.s.numberTicks).tickPadding(this.s.yAxisMargin).tickSize(-this.s.width, 0, 0);
+		this.yAxisTemp = d3.svg.axis().scale(this.yScaleTemp).orient('right').ticks(this.s.numberTicks).tickPadding(this.s.yAxisMargin);
 
 		this.svg = d3.select(this.s.el).append('svg')
-			.attr('width', this.s.width + this.s.marginLeft + this.s.marginRight)
-			.attr('height', this.s.height + this.s.marginTop + this.s.marginBottom)
+			.attr('width', this.s.width + this.s.marginLeft + this.s.marginRight + this.s.yAxisMargin + 10)
+			.attr('height', this.s.height + this.s.marginTop + this.s.marginBottom + this.s.xAxisMargin + 10)
 			.style('background-color', this.s.whiteBackground ? 'white' : 'transparent')
 			.attr('version', '1.1')
 			.attr('xmlns', 'http://www.w3.org/2000/svg')
@@ -130,9 +132,9 @@
 		let syncMinTempValue = syncMaxTempValue - (tempActualStep * precNumSteps);
 
 		let valueline = d3.svg.line()
-	    .x((d, i)  =>{ return this.xScaleTemp(i); })
-	    .y((d) => { return this.yScaleTemp(d); })
-	    .interpolate('basis');
+			.x((d, i)  =>{ return this.xScaleTemp(i); })
+			.y((d) => { return this.yScaleTemp(d); })
+			.interpolate('basis');
 
 
 
@@ -147,8 +149,8 @@
 			.attr('class', 'x axis')
 			.attr('fill', 'black')
 			.attr('font-size', this.s.fontSizeXAxis)
-      .attr('font-family', this.s.fontFamily)
-			.attr('transform', 'translate(0,' + this.s.height + ')')
+			.attr('font-family', this.s.fontFamily)
+			.attr('transform', `translate(0, ${this.s.height})`)
 			.call(this.xAxis);
 
 		this.svgG.append('g')
@@ -156,11 +158,11 @@
 				.attr('fill', this.s.precipitationColor)
 				.attr('shape-rendering', 'crispEdges')
 				.attr('font-size', this.s.fontSizeYAxis + 'px')
-        .attr('font-family', this.s.fontFamily)
-      .call(this.yAxisPrec)
+				.attr('font-family', this.s.fontFamily)
+			.call(this.yAxisPrec)
 			.append('text')
 				.attr('y', this.s.height + 15)
-				.attr('x', 0)
+				.attr('x', -this.s.yAxisMargin + 5)
 				.style('text-anchor', 'end')
 				.text(this.s.labelPrecipitation);
 
@@ -171,18 +173,18 @@
 				.attr('fill', this.s.tempColor)
 				.attr('shape-rendering', 'crispEdges')
 				.attr('font-size', this.s.fontSizeYAxis + 'px')
-        .attr('font-family', this.s.fontFamily)
-      .call(this.yAxisTemp)
+				.attr('font-family', this.s.fontFamily)
+			.call(this.yAxisTemp)
 			.append('text')
 				.attr('y', this.s.height + 15)
-				.attr('x', 0)
+				.attr('x', this.s.yAxisMargin + 5)
 				.text(this.s.labelTemperature);
 
 		// Draw precipitation bars
 		this.svgG.selectAll('.bar')
 				.data(data.precipitation)
 			.enter().append('rect')
-				.attr('x', (d, i) => { return this.xScalePrec(MONTHS[i]); })
+				.attr('x', (d, i) => { return this.xScalePrec(MONTHS[this.s.monthLabels][i]); })
 				.attr('y', (d) => { return this.yScalePrec(d); })
 				.attr('fill', this.s.precipitationColor)
 				.attr('width', this.xScalePrec.rangeBand())
@@ -210,7 +212,7 @@
 			.attr('fill', this.s.precipitationColor)
 			.attr('text-anchor', 'middle')
 			.attr('font-size', this.s.fontSizeSummary)
-      .attr('font-family', this.s.fontFamily)
+			.attr('font-family', this.s.fontFamily)
 			.text(`${ this.s.labelTotalPrecipitation}: ${ totalPrecipitation } ${ this.s.labelPrecipitation }`);
 
 		summary.append('text')
@@ -219,7 +221,7 @@
 			.attr('fill', this.s.tempColor)
 			.attr('text-anchor', 'middle')
 			.attr('font-size', this.s.fontSizeSummary)
-      .attr('font-family', this.s.fontFamily)
+			.attr('font-family', this.s.fontFamily)
 			.text(`${ this.s.labelMeanTemperature}: ${ meanTemperature } ${ this.s.labelTemperature }`);
 
 		summary.append('text')
@@ -228,7 +230,7 @@
 			.attr('fill', this.s.tempColor)
 			.attr('text-anchor', 'middle')
 			.attr('font-size', this.s.fontSizeSummary)
-      .attr('font-family', this.s.fontFamily)
+			.attr('font-family', this.s.fontFamily)
 			.text(`${ this.s.labelAplitudeTemperature}: ${ amplitude } ${ this.s.labelTemperature }`);
 
 		this.svg.append('g')

@@ -132,9 +132,9 @@
     "marginBottom": {
       "propertyOrder": 60,
       "type": "integer",
-      "default": 40,
+      "default": 5,
       "minimum": 0,
-      "maximum": 100,
+      "maximum": 10,
       "options": {
         "grid_columns": 3
       }
@@ -252,7 +252,7 @@
       "propertyOrder": 160,
       "title": "Month Labels",
       "type": "select",
-      "enum": ["Roman (I-XII)", "BG Letters (Я-Д)", "Latin Letters (J-D)"],
+      "enum": ["Roman (I-XII)", "BG Letters (Я-Д)", "BG Abbr (яну-дек)", "Latin Letters (J-D)", "Latin Abbr (Jan-Dec)"],
       "required": true,
       "default": "Roman (I-XII)"
     }
