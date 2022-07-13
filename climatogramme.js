@@ -65,6 +65,7 @@
 			secondaryTitle: '',
 			fontSizeSummary: 12,
 			fontFamily: 'sans-serif',
+      summaryMargin: 0,
 			precipitationColor: '#4682B4',
 			tempColor: '#ff0000',
 			fontSizeXAxis: 12,
@@ -104,7 +105,7 @@
 
 		this.svg = d3.select(this.s.el).append('svg')
 			.attr('width', this.s.width + this.s.marginLeft + this.s.marginRight + this.s.yAxisMargin + 10)
-			.attr('height', this.s.height + this.s.marginTop + this.s.marginBottom + this.s.xAxisMargin + 10)
+			.attr('height', this.s.height + this.s.marginTop + this.s.marginBottom + this.s.xAxisMargin + this.s.fontSizeYAxis)
 			.style('background-color', this.s.whiteBackground ? 'white' : 'transparent')
 			.attr('version', '1.1')
 			.attr('xmlns', 'http://www.w3.org/2000/svg')
@@ -161,7 +162,7 @@
 				.attr('font-family', this.s.fontFamily)
 			.call(this.yAxisPrec)
 			.append('text')
-				.attr('y', this.s.height + 15)
+				.attr('y', this.s.height + this.s.fontSizeYAxis + 5)
 				.attr('x', -this.s.yAxisMargin + 5)
 				.style('text-anchor', 'end')
 				.text(this.s.labelPrecipitation);
@@ -176,7 +177,7 @@
 				.attr('font-family', this.s.fontFamily)
 			.call(this.yAxisTemp)
 			.append('text')
-				.attr('y', this.s.height + 15)
+				.attr('y', this.s.height + this.s.fontSizeYAxis + 5)
 				.attr('x', this.s.yAxisMargin + 5)
 				.text(this.s.labelTemperature);
 
@@ -199,7 +200,7 @@
 
 		let summary = this.svg.append('g').attr('class', 'summary')
 			.attr('font-size', '10px')
-			.attr('transform', `translate(${ this.s.marginLeft }, ${ this.s.marginTop + 12 })`);
+			.attr('transform', `translate(${ this.s.marginLeft }, ${ this.s.marginTop + this.s.fontSizeSummary + this.s.summaryMargin })`);
 
 		let totalPrecipitation = round(d3.sum(data.precipitation), 1).toFixed(0);
 		let meanTemperature = round(d3.mean(data.meanTemperature), 0.01).toFixed(2);

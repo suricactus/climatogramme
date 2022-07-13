@@ -20,7 +20,7 @@
       "minimum": 5,
       "maximum": 50,
       "options": {
-        "grid_columns": 6
+        "grid_columns": 4
       }
     },
     "fontFamily": {
@@ -31,7 +31,16 @@
       "default": "sans-serif",
       "reguired": true,
       "options": {
-        "grid_columns": 6
+        "grid_columns": 4
+      }
+    },
+    "summaryMargin": {
+      "propertyOrder": 15,
+      "title": "Summary margin",
+      "type": "integer",
+      "default": 0,
+      "options": {
+        "grid_columns": 4
       }
     },
     "fontSizeXAxis": {
